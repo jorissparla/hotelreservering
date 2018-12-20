@@ -24,13 +24,36 @@ namespace Hotelreservering
         public Random rnd = new Random();
         public string getReservationNumber()
         {
-            
             return rnd.Next(111111,999999).ToString();
         }
-        public void addReservation(int roomnumber, string date)
+        public void addReservation(int roomnumber, DateTime date, Customer customer, int nrpersons)
         {
-            Reservation res = new Reservation(nr:getReservationNumber(),date:DateTime.Today,roomnumber:roomnumber);
-            reservations.Add(res);
+
+            try
+            {
+                List <Room> selectedrooms = rooms.Where(r => r.number == roomnumber).ToList() ;
+
+                if (selectedrooms.Count ==0 )
+                {
+                    throw new Exception($"Room {roomnumber} does not exist");
+                }
+
+                Room room = selectedrooms.First();
+
+                if (room.persons <nrpersons)
+                {
+                    throw new Exception("Number of persons exceeds Room Capacity");
+                }
+
+                Reservation res = new Reservation(nr: getReservationNumber(), date: date, room:room, customer: customer);
+                reservations.Add(res);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString() );
+                Console.WriteLine($"Unable to create Reservation for room {roomnumber}");
+            }
+           
             ;
             
         }
@@ -65,7 +88,7 @@ namespace Hotelreservering
         int _number;
         int _people = 4;
         public int number { get => _number; set => _number = value; }
-        public int person { get => _people; set => _people = value; }
+        public int persons { get => _people; set => _people = value; }
 
         public Room(int number)
         {
@@ -85,13 +108,35 @@ namespace Hotelreservering
         string _nr;
         public DateTime date { get => _date; set => _date = value; }
         public int roomnumber { get => _roomnumber; set => _roomnumber = value; }
+        private Room _room;
         public string nr { get => _nr; set => _nr = value; }
-        public Reservation(string nr, DateTime date, int roomnumber)
+        internal Customer Customer { get => customer; set => customer = value; }
+        internal Room Room { get => _room; set => _room = value; }
+
+        private Customer customer;
+        public Reservation(string nr, DateTime date, Room room, Customer customer)
         {
             _date = date;
+            Room = room;
             _roomnumber = roomnumber;
             _nr = nr;
+            Customer = customer;
         }
     }
 
+
+    class Customer
+    {
+        private string _name;
+        private string _email;
+
+        public Customer(string name, string email)
+        {
+            Email = email;
+            Name = name;
+        }
+
+        public string Email { get => _email; set => _email = value; }
+        public string Name { get => _name; set => _name = value; }
+    }
 }

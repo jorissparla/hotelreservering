@@ -14,10 +14,15 @@ namespace Hotelreservering
         static void Main(string[] args)
         {
             HotelManager hotelManager = new HotelManager();
-            hotelManager.addReservation(1, "20181219");
-            hotelManager.addReservation(2, "20181219");
-            hotelManager.addReservation(3, "20181219");
-            hotelManager.addReservation(4, "20181219");
+            Customer customer1 = new Customer("Joris", "joris.sparla@gmail.com");
+            Customer customer2 = new Customer("Piet", "joris.sparla@gmail.com");
+            Customer customer3 = new Customer("Kees", "joris.sparla@gmail.com");
+            Customer customer4 = new Customer("Klaas", "joris.sparla@gmail.com");
+            hotelManager.addReservation(11, DateTime.Now, customer1, 4);
+            hotelManager.addReservation(1, DateTime.Now, customer1, 14);
+            hotelManager.addReservation(2,DateTime.Now, customer2, 3);
+            hotelManager.addReservation(3, DateTime.Now.AddDays(1), customer3, 2);
+            hotelManager.addReservation(4, DateTime.Now.AddDays(1), customer4, 1);
             foreach(Reservation res in hotelManager.Reservations()) {
                 Console.WriteLine("Reservering " + res.nr);
             }
@@ -26,7 +31,7 @@ namespace Hotelreservering
             hotelManager.RemoveReservation(r.nr);
             foreach (Reservation res in hotelManager.Reservations())
             {
-                Console.WriteLine("Reservering " + res.nr);
+                Console.WriteLine($"Reservering {res.nr} on {res.date}, room {res.roomnumber} for {res.Customer.Name}");
             }
             Console.Read();
         }
